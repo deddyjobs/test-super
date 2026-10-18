@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TKJ Quest – Belajar Kejuruan Lewat Misi dan Kuis</title>
+<meta name="description" content="Platform gamifikasi pembelajaran kejuruan: kuis, poin, dan level untuk siswa; pembuatan kuis dan rekap hasil untuk guru.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2b3a;--mute:#5b6b7c;--bg:#f3f8fb;--card:#fff;--line:#d9e4ec;--teal:#0e8f8f;--teal-d:#0a6f6f;--sun:#ffc93c;--coral:#e8503e;--ok:#1f9d55;--warn:#c27803;--r:16px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Nunito,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+h1,h2,h3{font-family:Fredoka,Nunito,sans-serif;line-height:1.2;margin:0 0 .5rem}
+h1{font-size:clamp(1.8rem,5vw,2.8rem)}h2{font-size:1.4rem}h3{font-size:1.1rem}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding:1rem}
+header.top{background:var(--ink);color:#fff}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.brand{font-family:Fredoka;font-weight:700;font-size:1.3rem}.brand b{color:var(--sun)}
+nav{display:flex;gap:.4rem;flex-wrap:wrap;margin:1rem 0}
+nav button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:.4rem 1rem;cursor:pointer;font-weight:700}
+nav button[aria-current=page]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:1.1rem;margin-bottom:1rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.stat{background:var(--ink);color:#fff;border-radius:var(--r);padding:1rem}
+.stat.sun{background:var(--sun);color:var(--ink)}.stat.teal{background:var(--teal)}
+.stat .n{font-family:Fredoka;font-size:2.2rem;font-weight:700;line-height:1}
+.bar{height:14px;background:rgba(255,255,255,.3);border-radius:99px;overflow:hidden;margin-top:.6rem}
+.bar i{display:block;height:100%;background:var(--ink);border-radius:99px;transition:width .4s}
+.light .bar{background:var(--line)}.light .bar i{background:var(--teal)}
+.btn{border:0;background:var(--teal);color:#fff;font-weight:700;border-radius:12px;padding:.65rem 1.2rem;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--teal-d)}.btn.sun{background:var(--sun);color:var(--ink)}.btn.sun:hover{background:#f0b820}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line)}.btn.ghost:hover{background:var(--bg)}
+.btn.bad{background:var(--coral)}.btn.sm{padding:.3rem .8rem;min-height:36px;font-size:.9rem}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.sp{justify-content:space-between}
+label{display:block;font-weight:700;margin:.7rem 0 .25rem}
+input,select,textarea{width:100%;padding:.6rem .7rem;border:2px solid var(--line);border-radius:10px;background:#fff}
+input[type=radio],input[type=checkbox]{width:auto}
+.tag{display:inline-block;padding:.1rem .65rem;border-radius:99px;font-size:.85rem;font-weight:700;background:var(--line)}
+.tag.ok{background:#d6f3e2;color:#14633a}.tag.warn{background:#fdeabf;color:#7a4b00}.tag.bad{background:#fbd9d4;color:#8f2517}
+.err{background:#fbd9d4;color:#8f2517;padding:.6rem .8rem;border-radius:10px;margin:.6rem 0}
+.hero{display:grid;gap:2rem;grid-template-columns:1.1fr 1fr;align-items:center;padding:2rem 0}
+.hero p{font-size:1.1rem;color:var(--mute)}
+.opt{display:flex;gap:.7rem;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:.8rem;margin:.5rem 0;cursor:pointer;background:#fff;font-weight:600;margin-top:.5rem}
+.opt:has(input:checked){border-color:var(--teal);background:#e3f5f5}
+.opt.right{border-color:var(--ok);background:#e2f6ea}.opt.wrong{border-color:var(--coral);background:#fdeceb}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{text-align:left;padding:.55rem;border-bottom:1px solid var(--line)}
+.q{border:2px dashed var(--line);border-radius:12px;padding:.8rem;margin:.8rem 0}
+.big{font-family:Fredoka;font-size:3.5rem;font-weight:700;color:var(--teal);line-height:1}
+.muted{color:var(--mute)}small{color:var(--mute)}
+@media(max-width:720px){.hero{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+body{background-image:radial-gradient(#cfdde6 1px,transparent 1px);background-size:22px 22px}
+header.top{background:linear-gradient(90deg,#14263a,#0a6f6f)}
+#app>*{animation:in .35s ease both}@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.btn:active{transform:scale(.96)}.btn.right{background:var(--ok);color:#fff;border-color:var(--ok)}
+.net{width:100%;max-width:340px;display:block;margin:1rem 0}
+.net line{stroke:var(--teal);stroke-width:2;stroke-dasharray:6 6;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-24}}
+.net circle{fill:var(--ink);stroke:var(--sun);stroke-width:3;transition:transform .2s,fill .2s;transform-box:fill-box;transform-origin:center;cursor:pointer}
+.net g:hover circle{transform:scale(1.3);fill:var(--teal)}
+.net text{font:700 12px Nunito,sans-serif;fill:var(--ink)}
+.opt:has(input:checked){animation:pop .25s}@keyframes pop{50%{transform:scale(1.02)}}
+.dots{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0}
+.dot{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:#fff;font-weight:700;cursor:pointer}
+.dot.done{background:var(--teal);border-color:var(--teal);color:#fff}.dot.cur{outline:3px solid var(--sun);outline-offset:2px}
+.badges{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.bdg{display:flex;gap:.4rem;align-items:center;padding:.4rem .8rem;border-radius:99px;background:#fff3c9;border:2px solid var(--sun);font-weight:700}
+.bdg.off{background:#fff;border-color:var(--line);filter:grayscale(1);opacity:.55}
+tr.me{background:#e3f5f5;font-weight:700}
+.hist{display:flex;gap:.8rem;align-items:flex-end;height:170px}
+.hist>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.hist i{display:block;background:var(--teal);border-radius:8px 8px 0 0;transition:height .6s}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:50}
+#toast{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,120px);background:var(--ink);color:#fff;padding:.7rem 1.2rem;border-radius:99px;font-weight:700;transition:transform .3s;z-index:60}
+#toast.show{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="brand">🛠️ TKJ <b>Quest</b></div><div id="who" class="row"></div></div></header>
+<main class="wrap" id="app" aria-live="polite"></main>
+<canvas id="cf" aria-hidden="true"></canvas><div id="toast" role="status"></div>
+
+<script>
+/* ===== Data (localStorage; demo tanpa server) ===== */
+const KEY='kejuruquest.v2';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
+const hash=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+let db;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert('Penyimpanan gagal. Periksa pengaturan peramban Anda.')}};
+async function init(){
+  try{db=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){db=null}
+  if(!db){
+    const hg=await hash('guru123'),hs=await hash('siswa123');
+    db={session:null,progress:{},users:[
+      {id:'g1',nama:'Bu Sari (Guru)',email:'guru@sekolah.id',role:'guru',kelas:['XI TKJ 1','XI TKJ 2'],pass:hg},
+      {id:'s1',nama:'Ahmad Fauzi',email:'siswa01@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s2',nama:'Aisyah Putri',email:'siswa02@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s3',nama:'Andi Pratama',email:'siswa03@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s4',nama:'Anisa Rahmawati',email:'siswa04@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s5',nama:'Bagas Saputra',email:'siswa05@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s6',nama:'Bella Safitri',email:'siswa06@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s7',nama:'Chandra Wijaya',email:'siswa07@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s8',nama:'Citra Lestari',email:'siswa08@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s9',nama:'Dani Kurniawan',email:'siswa09@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s10',nama:'Dewi Anggraini',email:'siswa10@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s11',nama:'Dimas Prasetyo',email:'siswa11@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s12',nama:'Eka Wulandari',email:'siswa12@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s13',nama:'Fajar Nugroho',email:'siswa13@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s14',nama:'Fitri Handayani',email:'siswa14@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s15',nama:'Gilang Ramadhan',email:'siswa15@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s16',nama:'Hana Permata',email:'siswa16@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s17',nama:'Indra Setiawan',email:'siswa17@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s18',nama:'Intan Maharani',email:'siswa18@sekolah.id',role:'siswa',kelas:['XI TKJ 1'],pass:hs},
+      {id:'s19',nama:'Joko Susilo',email:'siswa19@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s20',nama:'Karina Salsabila',email:'siswa20@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s21',nama:'Lutfi Hakim',email:'siswa21@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s22',nama:'Maya Sari',email:'siswa22@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s23',nama:'Naufal Azzam',email:'siswa23@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s24',nama:'Nurul Hidayah',email:'siswa24@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s25',nama:'Okta Firmansyah',email:'siswa25@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s26',nama:'Putra Mahendra',email:'siswa26@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s27',nama:'Qori Amalia',email:'siswa27@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s28',nama:'Rafi Alfarizi',email:'siswa28@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s29',nama:'Rina Marlina',email:'siswa29@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s30',nama:'Satria Utama',email:'siswa30@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s31',nama:'Tiara Cahyani',email:'siswa31@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s32',nama:'Umar Faruq',email:'siswa32@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s33',nama:'Vina Oktaviani',email:'siswa33@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s34',nama:'Wahyu Hidayat',email:'siswa34@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs},
+      {id:'s35',nama:'Yusuf Ramli',email:'siswa35@sekolah.id',role:'siswa',kelas:['XI TKJ 2'],pass:hs}],
+    quizzes:[{id:'q1',guruId:'g1',judul:'Dasar Jaringan Komputer',desk:'Uji pemahaman topologi, kabel, dan alamat IP.',kelas:'XI TKJ 1',status:'terbit',waktu:10,tampil:true,
+      soal:[{q:'Kabel yang umum dipakai untuk jaringan LAN adalah…',o:['Koaksial RG-6','UTP Cat5e','HDMI','VGA'],k:1,b:1},
+            {q:'Perangkat yang menghubungkan beberapa komputer dalam satu LAN adalah…',o:['Switch','Printer','Scanner','Webcam'],k:0,b:1},
+            {q:'Berikut yang merupakan alamat IPv4 yang valid…',o:['300.1.1.1','192.168.1.10','192.168.1','abc.def.1.1'],k:1,b:1}]}],
+    attempts:[]};
+    save();
+  }
+  render();
+}
+/* ===== Aturan gamifikasi (transparan) ===== */
+const RULE='Poin = skor kuis (0–100) pada percobaan pertama, ditambah bonus 20 poin bila skor ≥ 75. Mengulang kuis tidak menambah poin. Naik level setiap 100 poin.';
+const pts=u=>db.attempts.filter(a=>a.userId===u&&a.pertama).reduce((s,a)=>s+a.poin,0);
+const lvl=p=>Math.floor(p/100)+1;
+const user=id=>db.users.find(u=>u.id===id);
+const quiz=id=>db.quizzes.find(q=>q.id===id);
+const me=()=>user(db.session);
+const fmtT=s=>Math.floor(s/60)+'m '+String(s%60).padStart(2,'0')+'d';
+const fmtD=t=>new Date(t).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'});
+const lastAtt=(u,q)=>db.attempts.filter(a=>a.userId===u&&a.quizId===q).sort((a,b)=>b.selesai-a.selesai)[0];
+const status=(u,q)=>lastAtt(u,q)?'selesai':db.progress[u+'_'+q]?'sedang':'belum';
+const tag=s=>s==='selesai'?'<span class="tag ok">Selesai</span>':s==='sedang'?'<span class="tag warn">Sedang dikerjakan</span>':'<span class="tag">Belum dikerjakan</span>';
+
+/* ===== State UI ===== */
+let S={tab:'masuk',sub:'beranda',att:null,ed:null,res:null,flt:{kelas:'',quiz:''},detail:null,err:''};
+let timer=null;
+const go=(o)=>{Object.assign(S,o,{err:o.err||''});render()};
+
+function render(){
+  clearInterval(timer);
+  const u=db.session&&me();
+  document.getElementById('who').innerHTML=u?`<span>Halo, <b>${esc(u.nama)}</b> · ${u.role==='guru'?'Guru':'Siswa'}</span><button class="btn sun sm" data-act="logout">Keluar</button>`:'';
+  const a=document.getElementById('app');
+  a.innerHTML=!u?vAuth():S.att?vQuiz():S.res?vResult():u.role==='siswa'?vSiswa(u):vGuru(u);
+  if(S.att&&S.att.deadline)tick();
+  after();
+}
+
+/* ===== Auth ===== */
+function vAuth(){
+  const d=S.tab==='daftar';
+  return `<section class="hero"><div><h1>Jadi jagoan jaringan, satu misi demi satu misi.</h1>
+  <p>Kerjakan kuis TKJ, kumpulkan poin, dan naik level dari Teknisi Pemula sampai Arsitek Jaringan.</p>
+  <svg class="net" viewBox="0 0 320 175" role="img" aria-label="Diagram jaringan: internet, router, switch, dua komputer, dan server">
+  <line x1="160" y1="20" x2="160" y2="60"/><line x1="160" y1="60" x2="160" y2="100"/><line x1="160" y1="100" x2="70" y2="135"/><line x1="160" y1="100" x2="160" y2="135"/><line x1="160" y1="100" x2="250" y2="135"/>
+  <g><title>Internet: jaringan global tempat semua jaringan terhubung</title><circle cx="160" cy="20" r="12"/><text x="180" y="24">Internet</text></g>
+  <g><title>Router: meneruskan paket antar jaringan</title><circle cx="160" cy="60" r="12"/><text x="180" y="64">Router</text></g>
+  <g><title>Switch: menghubungkan perangkat dalam satu LAN</title><circle cx="160" cy="100" r="12"/><text x="180" y="104">Switch</text></g>
+  <g><title>PC klien</title><circle cx="70" cy="135" r="12"/><text x="70" y="168" text-anchor="middle">PC 1</text></g>
+  <g><title>PC klien</title><circle cx="160" cy="135" r="12"/><text x="160" y="168" text-anchor="middle">PC 2</text></g>
+  <g><title>Server: menyediakan layanan seperti web dan berkas</title><circle cx="250" cy="135" r="12"/><text x="250" y="168" text-anchor="middle">Server</text></g></svg>
+  <div class="card"><b>Coba satu soal:</b> mana alamat IPv4 yang valid?<div class="row" style="margin-top:.6rem"><button class="btn ghost sm" data-act="tz" data-v="0">192.168.1.256</button><button class="btn ghost sm" data-act="tz" data-v="1">10.0.0.1</button><button class="btn ghost sm" data-act="tz" data-v="2">172.16.1</button></div><p id="tzr" class="muted" role="status"></p></div>
+  <p class="muted"><small>Akun demo – Guru: guru@sekolah.id (kata sandi guru123) · Siswa: siswa01@sekolah.id sampai siswa35@sekolah.id (kata sandi siswa123)</small></p></div>
+  <form class="card" id="fAuth" novalidate><div class="row"><button type="button" class="btn ${d?'ghost':''}" data-act="tab" data-v="masuk">Masuk</button><button type="button" class="btn ${d?'':'ghost'}" data-act="tab" data-v="daftar">Daftar</button></div>
+  ${S.err?`<div class="err" role="alert">${esc(S.err)}</div>`:''}
+  <label for="role">Masuk sebagai</label><select id="role"><option value="siswa">Siswa</option><option value="guru">Guru</option></select>
+  ${d?`<label for="nama">Nama lengkap</label><input id="nama" autocomplete="name"><label for="kelas">Kelas (guru: pisahkan dengan koma)</label><input id="kelas" placeholder="XI TKJ 1">`:''}
+  <label for="email">Email</label><input id="email" type="email" autocomplete="username">
+  <label for="pass">Kata sandi</label><input id="pass" type="password" autocomplete="${d?'new-password':'current-password'}">
+  <p><button class="btn" type="submit">${d?'Buat akun':'Masuk'}</button></p>
+  <small>Kesulitan masuk? Hubungi guru atau admin sekolah Anda untuk mengatur ulang kata sandi.</small></form></section>`;
+}
+async function doAuth(){
+  const v=id=>(document.getElementById(id)||{}).value?.trim()||'';
+  const email=v('email').toLowerCase(),role=v('role'),pw=document.getElementById('pass').value;
+  if(!email||!pw)return go({err:'Isi email dan kata sandi.'});
+  const h=await hash(pw);
+  if(S.tab==='daftar'){
+    if(!v('nama')||!v('kelas'))return go({err:'Isi nama dan kelas.'});
+    if(pw.length<6)return go({err:'Kata sandi minimal 6 karakter.'});
+    if(db.users.some(x=>x.email===email))return go({err:'Email sudah terdaftar. Silakan masuk.'});
+    const n={id:uid(),nama:v('nama'),email,role,kelas:v('kelas').split(',').map(s=>s.trim()).filter(Boolean),pass:h};
+    db.users.push(n);db.session=n.id;save();return go({sub:'beranda'});
+  }
+  const x=db.users.find(u=>u.email===email&&u.pass===h);
+  if(!x)return go({err:'Email atau kata sandi salah.'});
+  if(x.role!==role)return go({err:`Akun ini terdaftar sebagai ${x.role==='guru'?'Guru':'Siswa'}. Ubah pilihan peran.`});
+  db.session=x.id;save();go({sub:'beranda'});toast('Selamat datang, '+x.nama.split(' ')[0]+'!');
+}
+
+/* ===== Siswa ===== */
+function nav(items){return `<nav aria-label="Navigasi utama">${items.map(([k,l])=>`<button data-act="sub" data-v="${k}" ${S.sub===k?'aria-current="page"':''}>${l}</button>`).join('')}</nav>`}
+function vSiswa(u){
+  const p=pts(u.id),L=lvl(p),pr=p%100;
+  const qs=db.quizzes.filter(q=>q.status==='terbit'&&u.kelas.includes(q.kelas));
+  const mine=db.attempts.filter(a=>a.userId===u.id).sort((a,b)=>b.selesai-a.selesai);
+  let body;
+  if(S.sub==='peringkat'){body=vRank(u)}else if(S.sub==='riwayat'){
+    body=`<div class="card"><h2>Riwayat kuis</h2>${mine.length?`<div class="scroll"><table><tr><th>Kuis</th><th>Skor</th><th>Poin</th><th>Waktu</th><th>Selesai</th><th></th></tr>${mine.map(a=>`<tr><td>${esc(quiz(a.quizId)?.judul||'(kuis dihapus)')}</td><td>${a.skor}</td><td>${a.pertama?'+'+a.poin:'0'}</td><td>${fmtT(a.durasi)}</td><td>${fmtD(a.selesai)}</td><td><button class="btn ghost sm" data-act="lihat" data-v="${a.id}">Lihat hasil</button></td></tr>`).join('')}</table></div>`:'<p>Belum ada riwayat. Mulai kuis pertamamu dari Beranda.</p>'}</div>`;
+  }else{
+    body=`<div class="grid light"><div class="stat sun"><div>Poin</div><div class="n" data-count="${p}">0</div></div>
+    <div class="stat teal"><div>Level · ${["Teknisi Pemula","Teknisi","Admin Jaringan","Network Engineer","Arsitek Jaringan"][Math.min(L-1,4)]}</div><div class="n">${L}</div><div class="bar"><i style="width:0" data-w="${pr}"></i></div><small style="color:#fff">${100-pr} poin lagi ke level ${L+1}</small></div>
+    <div class="stat"><div>Kuis selesai</div><div class="n">${qs.filter(q=>status(u.id,q.id)==='selesai').length}/${qs.length}</div></div></div>
+    ${badges(u,mine)}<p class="muted"><small>${RULE}</small></p>
+    <h2>Kuis tersedia</h2>${qs.length?qs.map(q=>{const s=status(u.id,q.id),la=lastAtt(u.id,q.id);return `<div class="card row sp"><div><h3>${esc(q.judul)}</h3><div class="muted">${esc(q.desk)}</div><div class="row" style="margin-top:.4rem">${tag(s)}<small>${q.soal.length} soal${q.waktu?` · ${q.waktu} menit`:''}${la?` · skor terakhir ${la.skor}`:''}</small></div></div>
+    <button class="btn" data-act="mulai" data-v="${q.id}">${s==='selesai'?'Ulangi Kuis':s==='sedang'?'Lanjutkan Kuis':'Mulai Kuis'}</button></div>`}).join(''):'<div class="card">Belum ada kuis untuk kelasmu. Tanyakan gurumu kapan kuis berikutnya terbit.</div>'}
+    ${mine[0]?`<h2>Hasil terbaru</h2><div class="card row sp"><span>${esc(quiz(mine[0].quizId)?.judul||'')} – skor <b>${mine[0].skor}</b></span><button class="btn ghost sm" data-act="lihat" data-v="${mine[0].id}">Lihat hasil</button></div>`:''}`;
+  }
+  return nav([['beranda','Beranda'],['riwayat','Riwayat kuis'],['peringkat','Peringkat']])+body;
+}
+
+/* ===== Pengerjaan kuis ===== */
+function startQuiz(id){
+  const u=me(),q=quiz(id),k=u.id+'_'+id;
+  if(!db.progress[k]){db.progress[k]={mulai:Date.now(),jawab:q.soal.map(()=>null)};save()}
+  const p=db.progress[k];
+  go({att:{qid:id,i:0,key:k,deadline:q.waktu?p.mulai+q.waktu*60000:0}});
+}
+function vQuiz(){
+  const A=S.att,q=quiz(A.qid),p=db.progress[A.key],s=q.soal[A.i],last=A.i===q.soal.length-1;
+  return `<div class="card"><div class="row sp"><h2>${esc(q.judul)}</h2>${A.deadline?'<span class="tag warn" id="tm" role="timer"></span>':''}</div>
+  <p class="muted">${esc(q.desk)}</p><div class="dots" aria-label="Navigasi soal">${q.soal.map((_,j)=>`<button class="dot ${j===A.i?'cur':''} ${p.jawab[j]!==null?'done':''}" data-act="goto" data-v="${j}" aria-label="Soal ${j+1}${p.jawab[j]!==null?', sudah dijawab':''}">${j+1}</button>`).join('')}</div>
+  <p><b>Soal ${A.i+1} dari ${q.soal.length}</b></p><fieldset style="border:0;padding:0;margin:0"><legend style="font-weight:700;font-size:1.1rem">${esc(s.q)}</legend>
+  ${s.o.map((o,j)=>`<label class="opt"><input type="radio" name="o" data-act="pick" data-v="${j}" ${p.jawab[A.i]===j?'checked':''}> <span>${esc(o)}</span></label>`).join('')}</fieldset>
+  <div class="row sp" style="margin-top:1rem"><button class="btn ghost" data-act="prev" ${A.i?'':'disabled'}>Kembali</button>
+  ${last?'<button class="btn sun" data-act="kirim">Kirim Jawaban</button>':'<button class="btn" data-act="next">Lanjut</button>'}</div>
+  <p><button class="btn ghost sm" data-act="keluarKuis">Simpan dan keluar</button> <small>Tips: tekan angka 1–4 untuk memilih jawaban.</small></p></div>`;
+}
+function tick(){
+  const upd=()=>{const t=document.getElementById('tm');if(!t)return;const r=Math.max(0,Math.round((S.att.deadline-Date.now())/1000));t.textContent='Sisa waktu '+fmtT(r);if(r<=0){clearInterval(timer);submitQuiz(true)}};
+  upd();timer=setInterval(upd,1000);
+}
+function submitQuiz(auto){
+  const A=S.att,q=quiz(A.qid),u=me(),p=db.progress[A.key];
+  if(!auto){const k=p.jawab.filter(x=>x===null).length;if(!confirm(k?`Masih ada ${k} soal belum dijawab. Kumpulkan sekarang?`:'Kumpulkan jawaban sekarang?'))return}
+  let got=0,tot=0,ben=0;
+  q.soal.forEach((s,i)=>{tot+=s.b;if(p.jawab[i]===s.k){got+=s.b;ben++}});
+  const skor=Math.round(got/tot*100),pertama=!db.attempts.some(a=>a.userId===u.id&&a.quizId===q.id);
+  const poin=pertama?skor+(skor>=75?20:0):0,now=Date.now();
+  const at={id:uid(),quizId:q.id,userId:u.id,jawab:p.jawab,skor,benar:ben,poin,pertama,mulai:p.mulai,selesai:now,durasi:Math.round((now-p.mulai)/1000)};
+  db.attempts.push(at);delete db.progress[A.key];save();
+  go({att:null,res:at.id});
+}
+
+/* ===== Hasil siswa ===== */
+function vResult(){
+  const at=db.attempts.find(a=>a.id===S.res),q=quiz(at.quizId);
+  if(!q)return `<div class="card"><p>Kuis ini sudah dihapus guru.</p><button class="btn" data-act="home">Kembali ke dasbor</button></div>`;
+  const fb=at.skor>=85?'Luar biasa! Kompetensimu pada topik ini sudah kuat.':at.skor>=60?'Bagus. Ulangi materi pada soal yang salah untuk menaikkan skor.':'Jangan menyerah. Pelajari ulang materinya lalu coba lagi.';
+  return `<div class="card" ${at.skor>=75?'data-confetti':''}><h2>Hasil: ${esc(q.judul)}</h2><div class="row"><div class="big" data-count="${at.skor}">0</div><div><b>${at.benar} dari ${q.soal.length} soal benar</b><br>Poin diperoleh: <b>${at.pertama?'+'+at.poin:'0 (percobaan ulang)'}</b><br><small>Waktu ${fmtT(at.durasi)}</small></div></div><p>${fb}</p>
+  <div class="row"><button class="btn" data-act="home">Kembali ke dasbor</button>${db.session===at.userId?`<button class="btn ghost" data-act="mulai" data-v="${q.id}">Coba lagi</button>`:''}</div></div>
+  ${q.tampil?revAns(q,at):'<div class="card"><small>Guru belum menampilkan jawaban benar untuk kuis ini.</small></div>'}`;
+}
+function revAns(q,at){return `<div class="card"><h3>Jawaban</h3>${q.soal.map((s,i)=>`<div class="q"><b>${i+1}. ${esc(s.q)}</b>${s.o.map((o,j)=>`<div class="opt ${j===s.k?'right':j===at.jawab[i]?'wrong':''}">${j===s.k?'✔':j===at.jawab[i]?'✘':'•'} ${esc(o)}${j===at.jawab[i]?' <small>(jawaban siswa)</small>':''}</div>`).join('')}</div>`).join('')}</div>`}
+
+/* ===== Guru ===== */
+function vGuru(u){
+  const my=db.quizzes.filter(q=>q.guruId===u.id),ids=my.map(q=>q.id);
+  const at=db.attempts.filter(a=>ids.includes(a.quizId));
+  const t={beranda:vGBeranda,kuis:vGKuis,buat:vEditor,rekap:vRekap}[S.sub]||vGBeranda;
+  return nav([['beranda','Ringkasan'],['kuis','Kuis saya'],['buat','Buat Kuis'],['rekap','Rekap hasil']])+t(u,my,at);
+}
+function vGBeranda(u,my,at){
+  const avg=at.length?Math.round(at.reduce((s,a)=>s+a.skor,0)/at.length):0;
+  let exp=0,done=0;my.filter(q=>q.status==='terbit').forEach(q=>{const st=db.users.filter(x=>x.role==='siswa'&&x.kelas.includes(q.kelas));exp+=st.length;done+=st.filter(x=>lastAtt(x.id,q.id)).length});
+  const rec=at.slice().sort((a,b)=>b.selesai-a.selesai).slice(0,5);
+  return `<div class="grid"><div class="stat"><div>Kuis dibuat</div><div class="n">${my.length}</div><small style="color:#fff">${my.filter(q=>q.status==='terbit').length} terbit</small></div>
+  <div class="stat teal"><div>Rata-rata nilai</div><div class="n">${avg}</div></div><div class="stat sun"><div>Tingkat penyelesaian</div><div class="n">${exp?Math.round(done/exp*100):0}%</div></div></div>
+  <div class="row" style="margin:1rem 0"><button class="btn" data-act="sub" data-v="buat">Buat Kuis</button><button class="btn ghost" data-act="sub" data-v="rekap">Lihat Hasil</button></div>
+  <div class="card"><h2>Aktivitas terbaru</h2>${rec.length?rec.map(a=>`<div class="row sp" style="padding:.3rem 0"><span>${esc(user(a.userId)?.nama)} mengerjakan <b>${esc(quiz(a.quizId)?.judul)}</b></span><span>Skor ${a.skor}</span></div>`).join(''):'<p>Belum ada siswa yang mengerjakan kuis. Terbitkan kuis agar muncul di dasbor siswa.</p>'}</div>`;
+}
+function vGKuis(u,my){
+  return `<h2>Kuis saya</h2>${my.length?my.map(q=>`<div class="card row sp"><div><h3>${esc(q.judul)}</h3><div class="row"><span class="tag ${q.status==='terbit'?'ok':''}">${q.status==='terbit'?'Terbit':'Draf'}</span><small>${esc(q.kelas)} · ${q.soal.length} soal</small></div></div>
+  <div class="row"><button class="btn ghost sm" data-act="edit" data-v="${q.id}">Edit</button><button class="btn ghost sm" data-act="toggle" data-v="${q.id}">${q.status==='terbit'?'Tarik ke draf':'Terbitkan'}</button><button class="btn bad sm" data-act="hapus" data-v="${q.id}">Hapus</button></div></div>`).join(''):'<div class="card">Belum ada kuis. Klik Buat Kuis untuk memulai.</div>'}`;
+}
+function newEd(){return {id:null,judul:'',desk:'',kelas:me().kelas[0]||'',waktu:0,tampil:true,soal:[{q:'',o:['','','',''],k:0,b:1}]}}
+function vEditor(u){
+  const e=S.ed||(S.ed=newEd());
+  return `<form class="card" id="fEd" novalidate><h2>${e.id?'Edit kuis':'Buat kuis'}</h2>${S.err?`<div class="err" role="alert">${esc(S.err)}</div>`:''}
+  <label for="e_j">Judul kuis</label><input id="e_j" value="${esc(e.judul)}">
+  <label for="e_d">Instruksi / deskripsi</label><textarea id="e_d" rows="2">${esc(e.desk)}</textarea>
+  <div class="grid"><div><label for="e_k">Kelas peserta</label><select id="e_k">${u.kelas.map(k=>`<option ${k===e.kelas?'selected':''}>${esc(k)}</option>`).join('')}</select></div>
+  <div><label for="e_w">Batas waktu (menit, 0 = tanpa batas)</label><input id="e_w" type="number" min="0" value="${e.waktu}"></div></div>
+  <label><input type="checkbox" id="e_t" ${e.tampil?'checked':''}> Tampilkan jawaban benar setelah siswa selesai</label>
+  <h3 style="margin-top:1rem">Soal pilihan ganda</h3>
+  ${e.soal.map((s,i)=>`<div class="q"><div class="row sp"><b>Soal ${i+1}</b>${e.soal.length>1?`<button type="button" class="btn ghost sm" data-act="delSoal" data-v="${i}">Hapus soal</button>`:''}</div>
+  <label for="q${i}">Pertanyaan</label><input id="q${i}" value="${esc(s.q)}">
+  ${s.o.map((o,j)=>`<div class="row" style="margin-top:.4rem;flex-wrap:nowrap"><input type="radio" name="k${i}" value="${j}" aria-label="Jadikan opsi ${'ABCD'[j]} kunci jawaban" ${s.k===j?'checked':''}><input id="o${i}_${j}" aria-label="Opsi ${'ABCD'[j]}" placeholder="Opsi ${'ABCD'[j]}" value="${esc(o)}"></div>`).join('')}
+  <small>Pilih tombol bulat pada opsi yang menjadi kunci jawaban.</small>
+  <label for="b${i}">Bobot nilai</label><input id="b${i}" type="number" min="1" value="${s.b}" style="max-width:120px"></div>`).join('')}
+  <div class="row"><button type="button" class="btn ghost" data-act="addSoal">Tambah soal</button></div><hr>
+  <div class="row"><button type="button" class="btn ghost" data-act="pratinjau">Pratinjau</button><button type="button" class="btn ghost" data-act="simpan" data-v="draf">Simpan draf</button><button type="button" class="btn" data-act="simpan" data-v="terbit">Terbitkan Kuis</button></div></form>
+  ${S.prev?`<div class="card"><h3>Pratinjau: ${esc(e.judul||'(tanpa judul)')}</h3>${e.soal.map((s,i)=>`<p><b>${i+1}. ${esc(s.q)}</b></p>${s.o.map((o,j)=>`<div class="opt ${j===s.k?'right':''}">${esc(o)}</div>`).join('')}`).join('')}</div>`:''}`;
+}
+function collectEd(){
+  const e=S.ed,g=id=>document.getElementById(id);if(!g('e_j'))return;
+  Object.assign(e,{judul:g('e_j').value.trim(),desk:g('e_d').value.trim(),kelas:g('e_k').value,waktu:Math.max(0,+g('e_w').value||0),tampil:g('e_t').checked});
+  e.soal.forEach((s,i)=>{s.q=g('q'+i).value.trim();s.o=s.o.map((_,j)=>g(`o${i}_${j}`).value.trim());const r=document.querySelector(`input[name=k${i}]:checked`);s.k=r?+r.value:0;s.b=Math.max(1,+g('b'+i).value||1)});
+}
+function saveQuiz(st){
+  collectEd();const e=S.ed;
+  if(!e.judul)return go({err:'Judul kuis wajib diisi.'});
+  const bad=e.soal.findIndex(s=>!s.q||s.o.some(o=>!o));
+  if(bad>=0)return go({err:`Soal ${bad+1} belum lengkap: isi pertanyaan dan keempat opsi.`});
+  const d={...e,status:st,guruId:db.session};
+  if(e.id){Object.assign(quiz(e.id),d)}else{d.id=uid();db.quizzes.push(d)}
+  save();S.ed=null;S.prev=false;go({sub:'kuis'});toast(st==='terbit'?'Kuis diterbitkan':'Draf tersimpan');
+}
+
+/* ===== Rekap guru ===== */
+function vRekap(u,my){
+  const ks=u.kelas,fk=S.flt.kelas,list=my.filter(q=>!fk||q.kelas===fk);
+  const q=list.find(x=>x.id===S.flt.quiz)||list[0];
+  const sel=`<div class="card grid"><div><label for="fk">Kelas</label><select id="fk" data-f="kelas"><option value="">Semua kelas</option>${ks.map(k=>`<option ${k===fk?'selected':''}>${esc(k)}</option>`).join('')}</select></div>
+  <div><label for="fq">Kuis</label><select id="fq" data-f="quiz">${list.map(x=>`<option value="${x.id}" ${q&&x.id===q.id?'selected':''}>${esc(x.judul)}</option>`).join('')}</select></div></div>`;
+  if(!q)return sel+'<div class="card">Belum ada kuis untuk ditampilkan.</div>';
+  if(S.detail){const a=db.attempts.find(x=>x.id===S.detail);if(a)return `<div class="card"><button class="btn ghost sm" data-act="back">← Kembali ke rekap</button><h2>${esc(user(a.userId)?.nama)}</h2><p>Skor <b>${a.skor}</b> · Waktu ${fmtT(a.durasi)} · ${fmtD(a.selesai)}</p></div>${revAns(quiz(a.quizId),a)}`}
+  const st=db.users.filter(x=>x.role==='siswa'&&x.kelas.includes(q.kelas));
+  const rows=st.map(x=>({x,s:status(x.id,q.id),a:lastAtt(x.id,q.id)}));
+  const fin=rows.filter(r=>r.a),avg=fin.length?Math.round(fin.reduce((s,r)=>s+r.a.skor,0)/fin.length):0;
+  return sel+`<div class="grid light"><div class="stat teal"><div>Rata-rata nilai</div><div class="n">${avg}</div></div><div class="stat sun"><div>Penyelesaian</div><div class="n">${st.length?Math.round(fin.length/st.length*100):0}%</div></div></div>
+  ${dist(fin)}<div class="card scroll"><div class="row sp"><h2>${esc(q.judul)} · ${esc(q.kelas)}</h2><button class="btn ghost sm" data-act="csv" data-v="${q.id}">Unduh CSV</button></div>${q.status!=='terbit'?'<p><span class="tag warn">Kuis masih draf</span></p>':''}
+  <table><tr><th>Siswa</th><th>Status</th><th>Skor</th><th></th></tr>${rows.length?rows.map(r=>`<tr><td>${esc(r.x.nama)}</td><td>${tag(r.s)}</td><td>${r.a?r.a.skor:'–'}</td><td>${r.a?`<button class="btn ghost sm" data-act="detail" data-v="${r.a.id}">Detail jawaban</button>`:''}</td></tr>`).join(''):'<tr><td colspan="4">Belum ada siswa terdaftar di kelas ini.</td></tr>'}</table></div>`;
+}
+
+/* ===== Event ===== */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,v=b.dataset.v;
+  if(a==='pick'){const A=S.att;db.progress[A.key].jawab[A.i]=+v;save();return}
+  const A=S.att;
+  switch(a){
+    case 'tab':return go({tab:v});
+    case 'logout':db.session=null;save();return go({att:null,res:null,sub:'beranda',ed:null});
+    case 'sub':if(S.ed)collectEd();return go({sub:v,res:null,detail:null,prev:false});
+    case 'home':return go({res:null,sub:'beranda'});
+    case 'mulai':S.res=null;return startQuiz(v);
+    case 'goto':A.i=+v;return render();
+    case 'tz':return tz(b,v);
+    case 'csv':return csv(v);
+    case 'next':A.i++;return render();
+    case 'prev':A.i--;return render();
+    case 'kirim':return submitQuiz(false);
+    case 'keluarKuis':return go({att:null});
+    case 'lihat':return go({res:v});
+    case 'toggle':{const q=quiz(v);q.status=q.status==='terbit'?'draf':'terbit';save();toast(q.status==='terbit'?'Kuis diterbitkan':'Kuis ditarik ke draf');return render()}
+    case 'hapus':if(confirm('Hapus kuis ini beserta hasil siswanya?')){db.quizzes=db.quizzes.filter(q=>q.id!==v);db.attempts=db.attempts.filter(x=>x.quizId!==v);save();render()}return;
+    case 'edit':return go({ed:JSON.parse(JSON.stringify(quiz(v))),sub:'buat'});
+    case 'addSoal':collectEd();S.ed.soal.push({q:'',o:['','','',''],k:0,b:1});return render();
+    case 'delSoal':collectEd();S.ed.soal.splice(+v,1);return render();
+    case 'pratinjau':collectEd();S.prev=true;return render();
+    case 'simpan':return saveQuiz(v);
+    case 'detail':return go({detail:v});
+    case 'back':return go({detail:null});
+  }
+});
+document.addEventListener('change',e=>{const f=e.target.dataset.f;if(f){S.flt[f]=e.target.value;if(f==='kelas')S.flt.quiz='';S.detail=null;render()}});
+document.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='fAuth')doAuth()});
+
+function confetti(x,y){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const c=document.getElementById('cf'),g=c.getContext('2d'),cols=['#ffc93c','#0e8f8f','#e8503e','#ffffff','#7ad7f0'];
+  c.width=innerWidth;c.height=innerHeight;
+  const P=Array.from({length:90},()=>({x:x??innerWidth/2,y:y??innerHeight/3,vx:(Math.random()-.5)*12,vy:Math.random()*-12-2,s:5+Math.random()*6,c:cols[Math.random()*5|0],r:Math.random()*6}));
+  let f=0;(function a(){g.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.r+=.2;g.fillStyle=p.c;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);g.restore()});if(++f<110)requestAnimationFrame(a);else g.clearRect(0,0,c.width,c.height)})();
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2200)}
+function after(){
+  document.querySelectorAll('[data-count]').forEach(el=>{const to=+el.dataset.count,t0=performance.now();(function s(t){const k=Math.min(1,(t-t0)/900);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(s)})(t0)});
+  requestAnimationFrame(()=>{document.querySelectorAll('[data-w]').forEach(i=>i.style.width=i.dataset.w+'%');document.querySelectorAll('[data-h]').forEach(i=>i.style.height=i.dataset.h+'px')});
+  if(document.querySelector('[data-confetti]'))setTimeout(()=>confetti(),300);
+}
+function tz(b,v){
+  const ok=v==='1';
+  document.getElementById('tzr').textContent=ok?'Benar! 10.0.0.1 valid: empat bagian, masing-masing 0–255.':'Belum tepat. IPv4 punya empat bagian dan tiap angka maksimal 255. Coba lagi!';
+  if(ok){b.classList.add('right');const r=b.getBoundingClientRect();confetti(r.left+r.width/2,r.top)}else b.classList.add('bad');
+}
+function badges(u,mine){
+  const L=[['🚀','Langkah pertama',mine.length>=1],['🎯','Skor sempurna',mine.some(a=>a.skor===100)],['🔥','Rajin (3 kuis)',mine.length>=3],['⚡','Kilat (≤ 1 menit, skor ≥ 75)',mine.some(a=>a.durasi<=60&&a.skor>=75)],['🏅','Level 3',lvl(pts(u.id))>=3]];
+  return `<div class="badges" aria-label="Lencana">${L.map(([i,n,on])=>`<span class="bdg ${on?'':'off'}" title="${on?'Diraih':'Belum diraih'}">${i} ${n}</span>`).join('')}</div>`;
+}
+function vRank(u){
+  const r=db.users.filter(x=>x.role==='siswa'&&x.kelas.some(k=>u.kelas.includes(k))).map(x=>({x,p:pts(x.id)})).sort((a,b)=>b.p-a.p||a.x.nama.localeCompare(b.x.nama));
+  const pos=r.findIndex(o=>o.x.id===u.id)+1,m=['🥇','🥈','🥉'];
+  return `<div class="card"><h2>Papan peringkat</h2><p>Peringkatmu: <b>#${pos}</b> dari ${r.length} siswa. Selesaikan kuis untuk naik peringkat.</p><div class="scroll"><table><tr><th>#</th><th>Nama</th><th>Level</th><th>Poin</th></tr>${r.slice(0,10).map((o,i)=>`<tr class="${o.x.id===u.id?'me':''}"><td>${m[i]||i+1}</td><td>${esc(o.x.nama)}</td><td>${lvl(o.p)}</td><td>${o.p}</td></tr>`).join('')}</table></div></div>`;
+}
+function dist(fin){
+  const B=[['0–59',0,59],['60–74',60,74],['75–89',75,89],['90–100',90,100]],n=B.map(([,a,b])=>fin.filter(r=>r.a.skor>=a&&r.a.skor<=b).length),mx=Math.max(...n,1);
+  return `<div class="card" style="margin-top:1rem"><h3>Sebaran nilai</h3><div class="hist">${B.map((b,i)=>`<div><small>${n[i]} siswa</small><i style="height:0" data-h="${Math.round(n[i]/mx*100)}"></i><small>${b[0]}</small></div>`).join('')}</div></div>`;
+}
+function csv(id){
+  const q=quiz(id),L=['Nama,Email,Status,Skor'];
+  db.users.filter(x=>x.role==='siswa'&&x.kelas.includes(q.kelas)).forEach(x=>{const a=lastAtt(x.id,id);L.push([x.nama,x.email,status(x.id,id),a?a.skor:''].map(v=>`"${v}"`).join(','))});
+  const u=URL.createObjectURL(new Blob(['\ufeff'+L.join('\n')],{type:'text/csv'})),a=document.createElement('a');
+  a.href=u;a.download='rekap-'+q.judul.replace(/\W+/g,'-')+'.csv';a.click();URL.revokeObjectURL(u);toast('Rekap diunduh');
+}
+document.addEventListener('keydown',e=>{
+  if(S.att&&e.key>='1'&&e.key<='4'&&!/TEXTAREA|SELECT/.test(e.target.tagName))document.querySelectorAll('.opt input')[+e.key-1]?.click();
+});
+init();
+</script>
+</body>
+</html>
